@@ -1,0 +1,128 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+  
+body {
+    background-color: #1d1e22;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+        Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.item {
+  float:left;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  margin:10px;
+  width: 200px;
+  height: 200px;
+}
+
+.item img {
+  width: 100%;
+  height: 100%;
+}
+
+.item h2 {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  width: 100%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+}
+
+.image-wrapper {
+  background: radial-gradient(#76b2fe, #b69efe);
+}
+
+.sensors-wrapper-overlay {
+  margin-top: -163px;
+}
+
+.sensor {
+    position: relative;
+    padding:4px;
+    color:#FFF;
+    font-weight: bold;
+}
+
+.sensor:hover {
+    color:#1d1e22;
+    cursor: pointer;
+}
+
+.sensor-lpg::before {
+  content:url(icons/smoke-mask.svg);
+  filter: invert(24%) sepia(6%) saturate(165%) hue-rotate(97deg) brightness(97%) contrast(88%);
+  float:left;
+  width:23px;
+  height:23px;
+  margin-left:5px;
+  margin-right:5px;
+}
+
+.sensor-co::before {
+  content:url(icons/co2-4.svg);
+  filter: invert(14%) sepia(50%) saturate(4735%) hue-rotate(329deg) brightness(88%) contrast(90%);
+  float:left;
+  width:23px;
+  height:23px;
+  margin-left:5px;
+  margin-right:5px;
+}
+
+.sensor-smoke::before {
+  content:url(icons/smoke.svg);
+  filter: invert(23%) sepia(49%) saturate(479%) hue-rotate(150deg) brightness(100%) contrast(89%);
+  float:left;
+  width:23px;
+  height:23px;
+  margin-left:5px;
+  margin-right:5px;
+}
+
+.sensor-lpg::after,.sensor-co::after,.sensor-smoke::after {
+  content: " ppm";
+}
+
+.sensor-temp::before {
+    content:url(icons/temperature.svg);
+    filter: invert(45%) sepia(56%) saturate(873%) hue-rotate(345deg) brightness(95%) contrast(85%);
+    float:left;
+    width:23px;
+    height:23px;
+    margin-left:5px;
+    margin-right:5px;
+}
+
+.sensor-temp::after {
+    content: "°C";
+}
+
+.sensor-hum::before {
+    content:url(icons/drop2.svg);
+    filter: invert(59%) sepia(53%) saturate(263%) hue-rotate(150deg) brightness(87%) contrast(90%);
+    float:left;
+    width:23px;
+    height:23px;
+    margin-left:5px;
+    margin-right:5px;
+}
+
+.sensor-hum::after {
+    content: "%";
+}
+
+.sensor-light::before {
+    content:url(icons/sun.svg);
+    filter: invert(88%) sepia(12%) saturate(1154%) hue-rotate(3deg) brightness(90%) contrast(97%);
+    float:left;
+    width:23px;
+    height:23px;
+    margin-left:5px;
+    margin-right:5px;
+}
