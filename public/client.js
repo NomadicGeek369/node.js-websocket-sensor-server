@@ -1,4 +1,4 @@
-const ws = new WebSocket('ws:///192.168.0.150:8999');
+const ws = new WebSocket('ws://192.168.0.150:8999');
 
 ws.addEventListener('open', (event) => {
 	ws.send(JSON.stringify({
@@ -13,12 +13,9 @@ ws.onmessage = message => {
 	
 	for (const device in md.devices) {
 		if (!document.querySelector('#' + device)) {
-			const header = document.createTextNode(md.devices[device].display);
-			
 			document.querySelector('#main-wrapper')
 				.appendChild(createElement('div',{ id: device, class: md.devices[device].class + ' item' }))
-				.appendChild(createElement('h2',{ id: device + '-header', class: 'sensors-header' }))
-				.appendChild(header);
+				.appendChild(createElement('h2',{ id: device + '-header', class: 'sensors-header' }, md.devices[device].display));
 			document.querySelector('#'+device) 
 				.appendChild(createElement('div',{ id:'wrap-' + device + '-image', class: 'image-wrapper' }))
 				.appendChild(createElement('img',{ id:'img-' + device }));
@@ -26,7 +23,7 @@ ws.onmessage = message => {
 				.appendChild(createElement('div',{ id:'wrap-' + device + '-sensors', class:'sensors-wrapper-' + md.devices[device].view }))
 		}
 		
-		if (md.devices[device].image.length) {
+		if (md.devices[device].image) {
 			document.querySelector('#img-' + device).src = "data:image/jpeg;base64," + md.devices[device].image;
 		}
 		
@@ -41,23 +38,3 @@ ws.onmessage = message => {
 		}
 	}
 }
-
-const createElement = (e, a, i) => {
-	if (!e) return false;
-	if (!i) i = "";
-	let el = document.createElement(e);
-	if (a) {
-		for (const [k, v] of Object.entries(a)) {
-			el.setAttribute(k, v);
-		}
-	}
-	if (!Array.isArray(i)) i = [i];
-	for (const item of i) {
-		if (item.tagName) {
-			el.appendChild(item);
-		} else {
-			el.appendChild(document.createTextNode(item));
-		}
-	}
-	return el;
-};

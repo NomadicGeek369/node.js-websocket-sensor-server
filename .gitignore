@@ -1,2 +1,3 @@
 node_modules/
 *.jsonlock
+package-lock.json
