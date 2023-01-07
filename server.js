@@ -10,6 +10,7 @@ let connectedClients = [];
 const HTTP_PORT = 8000;
 
 let connections = {
+	test1: { port: 8885, class: 'cam-instance', display: 'Cam #1', view: 'overlay' },
 	gas1: { port: 8887, display: 'Cabin gas', class: 'gas-sensor', view: 'overlay' },
 	gas2: { port: 8886, display: 'Electric gas', class: 'gas-sensor', view: 'overlay' },
 };
@@ -34,7 +35,7 @@ Object.entries(connections).forEach(([key, settings]) => {
 		ws.on('message', data => {
 			if (ws.readyState !== ws.OPEN) return;
 			if (typeof data === 'object') {
-				// For a future video, taking care of video stream from ESP32 Cam
+				connection.image = Buffer.from(Uint8Array.from(data)).toString('base64');
 			} else {
 				connection.sensors = data.split(",").reduce((acc, item) => {
 					const key = item.split("=")[0];
@@ -46,7 +47,7 @@ Object.entries(connections).forEach(([key, settings]) => {
 
 			connectedClients.forEach(client => {
 				client.send(JSON.stringify({ devices: connections }));
-			});		  
+			});
 		});
 	});
 });
