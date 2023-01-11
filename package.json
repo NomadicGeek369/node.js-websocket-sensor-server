@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "server.js",
   "dependencies": {
+    "@tensorflow-models/coco-ssd": "^2.2.2",
+    "@tensorflow/tfjs-node": "^4.2.0",
     "express": "^4.17.3",
+    "fluidb": "^0.3.0",
     "path": "^0.12.7",
     "ws": "^7.5.7"
   },
