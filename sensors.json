@@ -1,0 +1,33 @@
+{
+    "test1": {
+        "port": 8885,
+        "class": "cam-instance",
+        "display": "Cam #1",
+        "view": "overlay",
+        "counter": 0,
+        "threshold": 0.7,
+        "frequency": 20,
+        "commands": [
+            {
+                "id": "ON_BOARD_LED_1",
+                "name": "Camera flashlight",
+                "class": "led-light",
+                "state": 0
+            }
+        ]
+    },
+    "gas1": {
+        "port": 8887,
+        "display": "Cabin gas",
+        "class": "gas-sensor",
+        "view": "overlay",
+        "commands": []
+    },
+    "gas2": {
+        "port": 8886,
+        "display": "Electric gas",
+        "class": "gas-sensor",
+        "view": "overlay",
+        "commands": []
+    }
+}
