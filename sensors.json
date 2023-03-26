@@ -1,33 +1,166 @@
 {
-    "test1": {
-        "port": 8885,
+    "esp32cam8": {
+        "port": 8013,
         "class": "cam-instance",
-        "display": "Cam #1",
-        "view": "overlay",
-        "counter": 0,
-        "threshold": 0.7,
-        "frequency": 20,
+        "display": "Cam #9",
         "commands": [
             {
-                "id": "ON_BOARD_LED_1",
+                "id": "ON_BOARD_LED",
                 "name": "Camera flashlight",
                 "class": "led-light",
                 "state": 0
             }
         ]
     },
+    "esp32cam9": {
+        "port": 8014,
+        "class": "cam-instance",
+        "display": "Cam #10",
+        "commands": [
+            {
+                "id": "ON_BOARD_LED",
+                "name": "Camera flashlight",
+                "class": "led-light",
+                "state": 0
+            }
+        ]
+    },
+    "esp32cam1": {
+        "port": 8001,
+        "class": "cam-instance",
+        "display": "Cam #1",
+        "commands": [
+            {
+                "id": "ON_BOARD_LED",
+                "name": "Camera flashlight",
+                "class": "led-light",
+                "state": 0
+            }
+        ]
+    },
+    "esp32cam2": {
+        "port": 8002,
+        "class": "cam-instance",
+        "display": "Cam #2",
+        "commands": [
+            {
+                "id": "ON_BOARD_LED",
+                "name": "Camera flashlight",
+                "class": "led-light",
+                "state": 0
+            }
+        ]
+    },
+    "esp32cam3": {
+        "port": 8003,
+        "class": "cam-instance",
+        "display": "Cam #3",
+        "commands": [
+            {
+                "id": "ON_BOARD_LED",
+                "name": "Camera flashlight",
+                "class": "led-light",
+                "state": 0
+            }
+        ]
+    },
+    "esp32cam4": {
+        "port": 8004,
+        "class": "cam-instance",
+        "display": "Cam #4",
+        "commands": [
+            {
+                "id": "ON_BOARD_LED",
+                "name": "Camera flashlight",
+                "class": "led-light",
+                "state": 0
+            }
+        ]
+    },
+    "esp32cam5": {
+        "port": 8005,
+        "class": "cam-instance",
+        "display": "Cam #5",
+        "commands": [
+            {
+                "id": "ON_BOARD_LED",
+                "name": "Camera flashlight",
+                "class": "led-light",
+                "state": 0
+            }
+        ]
+    },
+    "esp32cam6": {
+        "port": 8006,
+        "class": "cam-instance",
+        "display": "Cam #6",
+        "commands": [
+            {
+                "id": "ON_BOARD_LED",
+                "name": "Camera flashlight",
+                "class": "led-light",
+                "state": 0
+            }
+        ]
+    },
+    "esp32cam7": {
+        "port": 8007,
+        "class": "cam-instance",
+        "display": "Cam #7",
+        "commands": [
+            {
+                "id": "ON_BOARD_LED",
+                "name": "Camera flashlight",
+                "class": "led-light",
+                "state": 0
+            }
+        ]
+    },
+    "freenove": {
+        "port": 8008,
+        "class": "cam-instance",
+        "display": "Cam #8",
+        "commands": [
+            {
+                "id": "ON_BOARD_LED",
+                "name": "Camera flashlight",
+                "class": "led-light",
+                "state": 0
+            },
+            {
+				"id": "MOTOR_FORWARD",
+				"label": "Forward",
+				"class": "forward-icon"
+            },
+            {
+				"id": "MOTOR_BACKWARD",
+				"label": "Backward",
+				"class": "backward-icon"
+            }
+        ]
+    },
     "gas1": {
-        "port": 8887,
+        "port": 8009,
         "display": "Cabin gas",
         "class": "gas-sensor",
-        "view": "overlay",
         "commands": []
     },
     "gas2": {
-        "port": 8886,
+        "port": 8010,
         "display": "Electric gas",
         "class": "gas-sensor",
-        "view": "overlay",
+        "commands": []
+    },
+    "gas3": {
+        "port": 8011,
+        "display": "Front Home gas",
+        "class": "gas-sensor",
+        "commands": []
+    },
+    "gas4": {
+        "port": 8012,
+        "display": "Back Home gas",
+        "class": "gas-sensor",
         "commands": []
     }
 }

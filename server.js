@@ -1,133 +1,104 @@
 const path = require('path');
 const express = require('express');
 const WebSocket = require('ws');
-const cocoSsd = require('@tensorflow-models/coco-ssd');
-const tf = require('@tensorflow/tfjs-node');
-const fluidb = require('fluidb');
-let sensors = require('./sensors.json');
+const cluster = require('cluster');
+const os = require('os');
+const globalSensorData = require('./global-sensor-data');
+const sensors = require('./sensors.json');
 
 const app = express();
-
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
-const validEnteties = ['cat', 'dog', 'person', 'laptop'];
-let connectedClients = [];
+const connectedClients = new Set();
 const HTTP_PORT = 8000;
+const updateFrequency = 150;
 
-process.on('uncaughtException', (error, origin) => {
-	console.log('----- Uncaught exception -----');
-	console.log(error);
-	console.log('----- Exception origin -----');
-	console.log(origin);
-	console.log('----- Status -----');
-	console.table(tf.memory());
-});
+const cores = os.cpus().length;
 
-process.on('unhandledRejection', (reason, promise) => {
-	console.log('----- Unhandled Rejection -----');
-	console.log(promise);
-	console.log('----- Reason -----');
-	console.log(reason);
-	console.log('----- Status -----');
-	console.table(tf.memory());
-});
+console.log(`Total CPUs (Logical cores): ${cores}`);
+cluster.setupPrimary({ exec: path.join(__dirname, 'sensor.js') });
+const workers = new Map();
 
-async function loadModel() {
-	console.log(`AI Model - Loading`);
-	return await cocoSsd.load();
+const sensorsArray = Object.entries(sensors).map(([key, value]) => ({ key, ...value }));
+Object.assign(globalSensorData, Object.fromEntries(sensorsArray.map(sensor => [sensor.key, sensor])));
+
+const sensorsPerWorker = Math.ceil(sensorsArray.length / cores);
+
+for (let i = 0; i < cores; i++) {
+	const workerSensors = sensorsArray.slice(i * sensorsPerWorker, (i + 1) * sensorsPerWorker);
+	if (workerSensors.length === 0) continue;
+	
+	const worker = cluster.fork();
+	worker.send({ update: 'sensor', data: workerSensors[0] });
+	
+	worker.on('message', (message) => {
+		if (message.update === 'sensor') {
+			updateSensors(message.data);
+		}
+	});
+	
+	workers.set(worker, workerSensors[0].port);
 }
 
-loadModel().then(model => {
-	console.log(`AI Model - Done`);
-
-	// Clients
-	const wss = new WebSocket.Server({port: '8999'}, () => console.log(`WS Server is listening at 8999`));
-
-	wss.on('connection', ws => {
-		ws.on('message', data => {
-			if (ws.readyState !== ws.OPEN) return;
-			connectedClients.push(ws);
-
-			try {
-				data = JSON.parse(data);
-			
-				if(data.operation === 'function') {
-					if(sensors[data.command.recipient]) {
-						sensors[data.command.recipient].command = data.command.message.key + '=' + data.command.message.value;
-					}
-					console.log(data);
-				}
-			} catch (error) {}
-		});
+cluster.on('exit', (worker) => {
+	console.log(`Worker ${worker.process.pid} killed. Starting new one!`);
+	
+	workers.delete(worker);
+	const newWorker = cluster.fork();
+	const sensor = sensorsArray.slice((workers.size - 1) * Math.floor(sensorsArray.length / os.cpus().length), workers.size * Math.floor(sensorsArray.length / os.cpus().length));
+	newWorker.send({ update: 'sensor', data: sensor });
+	
+	newWorker.on('message', (message) => {
+		if (message.update === 'sensor') {
+			updateSensors(message.data);
+		}
 	});
+	
+	workers.set(newWorker, sensor.port);
+});
 
+function updateSensors(updatedSensor) {
+	globalSensorData[updatedSensor.key] = updatedSensor;
+}
 
-	// Sensors
-	Object.entries(sensors).forEach(([sensorKey]) => {
-		const connection = sensors[sensorKey];
+const wss = new WebSocket.Server({ port: 8999 }, () => console.log('WS Server is listening at 8999'));
+
+setInterval(() => {
+	for (const client of connectedClients) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(JSON.stringify({ devices: Object.values(globalSensorData) }));
+		}
+	}
+}, updateFrequency);
+
+wss.on('connection', (ws) => {
+	connectedClients.add(ws);
+	
+	ws.on('message', async (data) => {
+		if (ws.readyState !== ws.OPEN) return;
 		
-		new WebSocket.Server({port: connection.port}, () => console.log(`WS Server is listening at ${connection.port}`)).on('connection',(ws) => {
-			ws.on('message', data => {
-				if (ws.readyState !== ws.OPEN) return;
-
-				if (connection.command) {
-					console.log('sending');
-					ws.send(connection.command);
-					connection.command = null; // consume
-				}
-
-				if (typeof data === 'object') {
-					let img = Buffer.from(Uint8Array.from(data)).toString('base64');
-					connection.counter++;
-
-					if (connection.counter === connection.frequency) {
-						connection.counter = 0;
-						let imgTensor = tf.node.decodeImage(new Uint8Array(data), 3);
-
-						model.detect(imgTensor).then((predictions) => {
-							predictions.forEach((prediction) => {
-								console.log(prediction.class+' - '+prediction.score);
-								if (validEnteties.includes(prediction.class) && prediction.score > connection.threshold) {
-									new fluidb('./images/'+prediction.class+'/'+Date.now(), {'score': prediction.score, 'img': img, 'bbox': prediction.bbox});
-								}
-							});
-							tf.dispose([imgTensor]);
-						});
+		try {
+			data = JSON.parse(data);
+			
+			if (data.operation === 'function') {
+				const sensorToUpdate = sensorsArray.find(sensor => sensor.key === data.command.recipient);
+				
+				if (sensorToUpdate) {
+					const targetWorker = [...workers.entries()].find(([, port]) => port === sensorToUpdate.port)?.[0];
+					if (targetWorker) {
+						targetWorker.send({ update: 'command', data: `${data.command.message.key}=${data.command.message.value}` });
 					}
-					connection.image = img;
-				} else {
-					let sensorData = data;
-
-					if (data.includes(';')) {
-						let dataArray = data.split(";");
-						sensorData = dataArray[0].split("=")[1];
-						let states = dataArray[1].split(":")[1].split(",");
-						
-						states.forEach(state => {
-							let [key, value] = state.split("=");
-							const commandFind = connection.commands.find(c => c.id === key);
-					
-							if (commandFind) { 
-								commandFind.state = value; 
-							}
-						});
-					}
-
-					connection.sensors = sensorData.split(",").reduce((acc, item) => {
-						const key = item.split("=")[0];
-						const value = item.split("=")[1];
-						acc[key] = value;
-						return acc;
-					}, {});
 				}
-
-				connectedClients.forEach(client => {
-					client.send(JSON.stringify({ devices: sensors }));
-				});
-			});
-		});
+			}
+		} catch (error) {}
+		
+	});
+	
+	ws.on('close', () => {
+		connectedClients.delete(ws);
 	});
 });
 
-app.get('/client',(_req,res)=>{ res.sendFile(path.resolve(__dirname,'./public/client.html')); });
-app.listen(HTTP_PORT,()=>{ console.log(`HTTP server starting on ${HTTP_PORT}`); });
+app.get('/client', (_req, res) => { res.sendFile(path.resolve(__dirname, './public/pages/client1/client.html')); });
+app.get('/client2', (_req, res) => { res.sendFile(path.resolve(__dirname, './public/pages/client2/client.html')); });
+app.listen(HTTP_PORT, () => { console.log(`HTTP server starting on ${HTTP_PORT} with process ID ${process.pid}`); });

@@ -1,0 +1,184 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  color: aliceblue;
+  background-color: #1d1e22;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+      Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.item {
+  background-color: #252526;
+  float:left;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  margin:10px;
+  width: 200px;
+  height: 250px;
+}
+
+.item h2 {
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+  left: 50%;
+  width: 100%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.item img {
+  width: 200px;
+  height: 200px;
+}
+
+.item img:hover {
+  cursor: pointer;
+}
+
+.sensors-wrapper-overlay {
+  position: absolute;
+  top: 45px;
+}
+
+.command-button {
+  width: 30px;
+  height: 30px;
+  background-color: #333333;
+  border-radius: 10px;
+  margin-left: 10px;
+  margin-top: 10px;
+  padding: 5px;
+  cursor: pointer;
+  float: left;
+}
+
+.sensor {
+    position: relative;
+    padding:4px;
+    color:#FFF;
+    font-weight: bold;
+}
+
+.sensor:hover {
+    color:#1d1e22;
+    cursor: pointer;
+}
+
+.sensor-lpg::before {
+  content:url(../../icons/smoke-mask.svg);
+  filter: invert(24%) sepia(6%) saturate(165%) hue-rotate(97deg) brightness(97%) contrast(88%);
+  float:left;
+  width:23px;
+  height:23px;
+  margin-left:5px;
+  margin-right:5px;
+}
+
+.sensor-co::before {
+  content:url(../../icons/co2-4.svg);
+  filter: invert(14%) sepia(50%) saturate(4735%) hue-rotate(329deg) brightness(88%) contrast(90%);
+  float:left;
+  width:23px;
+  height:23px;
+  margin-left:5px;
+  margin-right:5px;
+}
+
+.sensor-smoke::before {
+  content:url(../../icons/smoke.svg);
+  filter: invert(23%) sepia(49%) saturate(479%) hue-rotate(150deg) brightness(100%) contrast(89%);
+  float:left;
+  width:23px;
+  height:23px;
+  margin-left:5px;
+  margin-right:5px;
+}
+
+.sensor-lpg::after,.sensor-co::after,.sensor-smoke::after {
+  content: " ppm";
+}
+
+.sensor-temp::before {
+    content:url(../../icons/temperature.svg);
+    filter: invert(45%) sepia(56%) saturate(873%) hue-rotate(345deg) brightness(95%) contrast(85%);
+    float:left;
+    width:23px;
+    height:23px;
+    margin-left:5px;
+    margin-right:5px;
+}
+
+.sensor-temp::after {
+    content: "°C";
+}
+
+.sensor-hum::before {
+    content:url(../../icons/drop2.svg);
+    filter: invert(59%) sepia(53%) saturate(263%) hue-rotate(150deg) brightness(87%) contrast(90%);
+    float:left;
+    width:23px;
+    height:23px;
+    margin-left:5px;
+    margin-right:5px;
+}
+
+.sensor-hum::after {
+    content: "%";
+}
+
+.sensor-light::before {
+    content:url(../../icons/sun.svg);
+    filter: invert(88%) sepia(12%) saturate(1154%) hue-rotate(3deg) brightness(90%) contrast(97%);
+    float:left;
+    width:23px;
+    height:23px;
+    margin-left:5px;
+    margin-right:5px;
+}
+
+.led-light {
+  content: url(../../icons/light-bulb2.svg);
+  width: 20px;
+}
+
+.led-light[data-state="0"] {
+  filter: invert(6%) sepia(6%) saturate(21%) hue-rotate(316deg) brightness(92%) contrast(86%);
+}
+
+.led-light[data-state="1"] {
+  filter: invert(88%) sepia(12%) saturate(1154%) hue-rotate(3deg) brightness(90%) contrast(97%);
+}
+
+
+
+.on-off-icon {
+  content: url(../../icons/power-on.svg);
+  width: 20px;
+}
+
+.on-off-icon[data-state="0"] {
+  filter: invert(6%) sepia(6%) saturate(21%) hue-rotate(316deg) brightness(92%) contrast(86%);
+}
+
+.on-off-icon[data-state="1"] {
+  filter: invert(47%) sepia(84%) saturate(1994%) hue-rotate(82deg) brightness(107%) contrast(109%);
+}
+
+.forward-icon {
+  filter: invert(6%) sepia(6%) saturate(21%) hue-rotate(316deg) brightness(92%) contrast(86%);
+  content: url(../../icons/up.svg);
+  width: 21px;
+}
+
+.backward-icon {
+  filter: invert(6%) sepia(6%) saturate(21%) hue-rotate(316deg) brightness(92%) contrast(86%);
+  content: url(../../icons/up.svg);
+  transform: rotate(-180deg);
+  width: 21px;
+}
